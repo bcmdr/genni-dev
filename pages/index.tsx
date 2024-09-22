@@ -54,7 +54,7 @@ export default function HomePage() {
 
   return (
     <div
-      className={`h-screen bg-gray-200 ${
+      className={`h-dvh bg-gray-200 ${
         inputPinned
           ? "grid grid-rows-[auto,1fr,auto] "
           : "flex justify-center items-center"

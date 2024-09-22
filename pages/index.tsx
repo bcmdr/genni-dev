@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import Link from "next";
+import Link from "next/link";
 import { useCompletion } from "ai/react";
 import hljs from "highlight.js";
 import "highlight.js/styles/vs2015.css"; // VSCode dark theme for syntax highlighting

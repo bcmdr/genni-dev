@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useCompletion } from "ai/react";
 import hljs from "highlight.js";
-import "highlight.js/styles/github.css"; // Import a CSS theme for highlighting
+import "highlight.js/styles/vs2015.css"; // VSCode dark theme for syntax highlighting
 
 export default function HomePage() {
   const [prompt, setPrompt] = useState<string>("");
@@ -52,13 +52,19 @@ export default function HomePage() {
   };
 
   return (
-    <div className="flex flex-col h-screen">
-      {/* Form for Input and Generate Button */}
+    <div
+      className={`h-screen bg-gray-200 ${
+        inputPinned
+          ? "grid grid-rows-[auto,1fr,auto] "
+          : "flex justify-center items-center"
+      }`}
+    >
+      {/* Top menu or form */}
       <form
         onSubmit={handleSubmit}
-        className={`w-full bg-gray-300 ${
+        className={`w-full ${
           inputPinned
-            ? "sticky top-0 z-50 shadow-md"
+            ? "sticky top-0 z-50 shadow-md flex items-center justify-between p-3 bg-black" // Flex layout for input + button when pinned
             : "flex-grow flex flex-col items-center justify-center p-7"
         }`}
       >
@@ -71,33 +77,47 @@ export default function HomePage() {
           </div>
         )}
         <div
-          className={`flex flex-col sm:flex-row w-full  p-3 ${
-            inputPinned ? "bg-gray-200" : "bg-gray-300 max-w-3xl rounded"
+          className={`flex w-full gap-2 items-center ${
+            inputPinned ? "flex-row" : "flex-col item-center max-w-3xl rounded"
           }`}
         >
+          {inputPinned && (
+            <a className="text-white px-2 font-bold" href="/">
+              Genni
+            </a>
+          )}
           <input
             type="text"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             placeholder="Describe your idea..."
-            className={`px-3 py-1 text-lg rounded-md mb-4 sm:mb-0 sm:mr-4 bg-gray-900 text-white ${
-              inputPinned ? "flex-grow" : "w-full"
+            className={`text-md ${
+              inputPinned
+                ? "flex-grow px-3 py-1 bg-black text-white border border-l-white border-t-transparent border-r-transparent border-b-transparent"
+                : "w-full mb-4 px-5 py-2 shadow-lg bg-white text-black border border-gray-200 rounded-full"
             }`}
           />
-          <button
-            type="submit"
-            className="px-5 py-2 text-white bg-gray-900 rounded-md hover:bg-gray-800"
-          >
-            Generate
-          </button>
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              className={`px-3 py-1 bg-black text-white rounded-md hover:bg-gray-800 ${
+                inputPinned ? "border border-white" : "flex"
+              }`}
+            >
+              Generate
+            </button>
+          </div>
         </div>
       </form>
 
       {/* Show Code Editor during code generation */}
-      {showEditor && (
-        <div className="w-full flex-grow bg-gray-50 border-t border-gray-300 p-3 overflow-y-auto text-left">
-          <pre>
-            <code className="html" ref={codeRef}>
+      {completion && showEditor && (
+        <div className="w-full flex-grow overflow-y-auto text-left">
+          <pre className="whitespace-pre-wrap break-words">
+            <code
+              className="html p-3 text-sm bg-gray-800 text-gray-100"
+              ref={codeRef}
+            >
               {completion}
             </code>
           </pre>
@@ -106,7 +126,7 @@ export default function HomePage() {
 
       {/* Show iframe after the code generation is completed */}
       {showIframe && (
-        <div className="flex-grow sticky w-full h-full fixed top-0 bg-white">
+        <div className="flex-grow w-full h-full">
           <iframe
             className="w-full h-full"
             srcDoc={iframeSrcDoc}
@@ -115,12 +135,12 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Toggle button to show/hide the code editor or iframe */}
+      {/* Bottom menu */}
       {completion && !isLoading && (
-        <div className="sticky w-full p-3 bg-white flex justify-between items-center shadow-md bg-gray-200">
+        <div className="sticky w-full p-2 bg-black flex justify-between items-center shadow-md bottom-0">
           <button
             onClick={handleToggleView}
-            className="px-3 py-1 text-white bg-gray-950 rounded-md hover:bg-gray-800 cursor-pointer"
+            className="text-sm px-3 py-1 text-white bg-black border border-white rounded-md hover:bg-gray-800 cursor-pointer"
           >
             {showEditor ? "Show Preview" : "Show Code"}
           </button>

@@ -59,11 +59,11 @@ export default function HomePage() {
         className={`w-full bg-gray-300 ${
           inputPinned
             ? "sticky top-0 z-50 shadow-md"
-            : "flex-grow flex flex-col items-center justify-center p-10"
+            : "flex-grow flex flex-col items-center justify-center p-7"
         }`}
       >
         {!inputPinned && (
-          <div className="mb-7 flex text-2xl items-center justify-center">
+          <div className="mb-7 flex text-2xl items-center justify-center text-black">
             <h3 className="font-bold mr-5 pr-5 border border-r-black border-t-transparent border-l-transparent border-b-transparent">
               Genni
             </h3>

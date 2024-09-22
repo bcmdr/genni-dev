@@ -132,6 +132,7 @@ export default function HomePage() {
             className="w-full h-full"
             srcDoc={iframeSrcDoc}
             title="Preview"
+            style={{ touchAction: "none" }} // Prevent scrolling of parent page
           />
         </div>
       )}
@@ -143,7 +144,7 @@ export default function HomePage() {
             onClick={handleToggleView}
             className="text-sm px-3 py-1 text-white bg-black border border-white rounded-md hover:bg-gray-800 cursor-pointer"
           >
-            {showEditor ? "Show Preview" : "Show Code"}
+            {showEditor ? "Hide Code" : "Show Code"}
           </button>
         </div>
       )}

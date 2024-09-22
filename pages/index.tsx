@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import Link from "next";
 import { useCompletion } from "ai/react";
 import hljs from "highlight.js";
 import "highlight.js/styles/vs2015.css"; // VSCode dark theme for syntax highlighting
@@ -82,9 +83,9 @@ export default function HomePage() {
           }`}
         >
           {inputPinned && (
-            <a className="text-white px-2 font-bold" href="/">
+            <Link className="text-white px-2 font-bold" href="/">
               Genni
-            </a>
+            </Link>
           )}
           <input
             type="text"

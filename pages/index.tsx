@@ -95,14 +95,14 @@ export default function HomePage() {
             className={`text-md ${
               inputPinned
                 ? "flex-grow px-3 py-1 bg-black text-white border border-l-white border-t-transparent border-r-transparent border-b-transparent"
-                : "w-full mb-4 px-5 py-2 shadow-lg bg-white text-black border border-gray-200 rounded-full"
+                : "w-full mb-4 px-5 py-2 shadow-lg bg-white text-black border border-gray-200 rounded-full text-lg"
             }`}
           />
           <div className="flex justify-center">
             <button
               type="submit"
               className={`px-3 py-1 bg-black text-white rounded-md hover:bg-gray-800 ${
-                inputPinned ? "border border-white" : "flex"
+                inputPinned ? "border border-white" : "flex text-lg"
               }`}
             >
               Generate

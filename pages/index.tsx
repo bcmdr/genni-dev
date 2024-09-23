@@ -14,12 +14,18 @@ export default function HomePage() {
     api: "/api/completion",
   });
 
-  const codeRef = useRef<HTMLElement>(null); // Reference for the code block
+  const scrollContainerRef = useRef<HTMLDivElement>(null); // Reference for the scrollable div
+  const [autoScroll, setAutoScroll] = useState<boolean>(true); // Track auto scroll state
+  const [scrollingProgrammatically, setScrollingProgrammatically] =
+    useState<boolean>(false); // Track if scroll is caused by code
 
   // Apply syntax highlighting to the streamed code
   useEffect(() => {
-    if (completion && showEditor && codeRef.current) {
-      hljs.highlightElement(codeRef.current); // Apply highlighting to the code block
+    if (completion && showEditor && scrollContainerRef.current) {
+      const codeElement = scrollContainerRef.current.querySelector("code");
+      if (codeElement) {
+        hljs.highlightElement(codeElement); // Apply highlighting directly to the code element
+      }
     }
   }, [completion, showEditor]);
 
@@ -32,12 +38,65 @@ export default function HomePage() {
     }
   }, [isLoading, completion]);
 
+  // Function to scroll to the bottom of the container
+  const scrollToBottom = () => {
+    const scrollContainer = scrollContainerRef.current;
+    if (scrollContainer) {
+      setScrollingProgrammatically(true); // Mark that the scroll is programmatic
+      scrollContainer.scrollTop = scrollContainer.scrollHeight; // Scroll to the bottom of the div
+    }
+  };
+
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+
+    const handleUserScroll = () => {
+      if (!scrollContainer || scrollingProgrammatically) {
+        setScrollingProgrammatically(false); // Reset programmatic scroll tracking
+        return;
+      }
+
+      // Check if the user is near the bottom (use a larger threshold for reliability)
+      const isNearBottom =
+        scrollContainer.scrollHeight - scrollContainer.scrollTop <=
+        scrollContainer.clientHeight + 10;
+
+      // Disable auto-scroll if the user scrolls up or away from the bottom
+      if (!isNearBottom) {
+        setAutoScroll(false);
+      } else {
+        // Re-enable auto-scroll when the user scrolls back to the bottom
+        setAutoScroll(true);
+      }
+    };
+
+    // Add scroll event listener
+    if (scrollContainer) {
+      scrollContainer.addEventListener("scroll", handleUserScroll);
+    }
+
+    // Clean up scroll event listener
+    return () => {
+      if (scrollContainer) {
+        scrollContainer.removeEventListener("scroll", handleUserScroll);
+      }
+    };
+  }, [scrollingProgrammatically]);
+
+  // Auto-scroll when content updates and autoScroll is enabled
+  useEffect(() => {
+    if (completion && autoScroll) {
+      scrollToBottom(); // Scroll to the bottom when new code is streamed
+    }
+  }, [completion, autoScroll]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent the form from refreshing the page
     if (prompt.trim()) {
       setInputPinned(true); // Pin input to the top
       setShowEditor(true); // Show the editor as code is generated
       setShowIframe(false); // Hide iframe initially
+      setAutoScroll(true); // Enable autoscroll when new code starts streaming
 
       // Start generating the code
       await complete(prompt); // Trigger the API call
@@ -101,8 +160,10 @@ export default function HomePage() {
           <div className="flex justify-center">
             <button
               type="submit"
-              className={`px-3 py-1 bg-black text-white rounded-md ${
-                inputPinned ? "border border-white" : "flex text-lg"
+              className={`bg-black text-white rounded-md ${
+                inputPinned
+                  ? "border border-white text-sm px-3 py-2 "
+                  : "flex text-md px-4 py-2"
               }`}
             >
               Generate
@@ -113,15 +174,14 @@ export default function HomePage() {
 
       {/* Show Code Editor during code generation */}
       {completion && showEditor && (
-        <div className="w-full flex-grow overflow-y-auto text-left">
-          <pre className="whitespace-pre-wrap break-words">
-            <code
-              className="html p-3 text-sm bg-gray-800 text-gray-100"
-              ref={codeRef}
-            >
-              {completion}
-            </code>
-          </pre>
+        <div
+          className="code-editor w-full flex-grow overflow-y-auto text-left bg-gray-800 p-3"
+          ref={scrollContainerRef}
+          style={{ height: "100%" }} // Full height scroll container
+        >
+          <code className="html text-sm text-gray-100 whitespace-pre-wrap break-words">
+            {completion}
+          </code>
         </div>
       )}
 
@@ -142,7 +202,7 @@ export default function HomePage() {
         <div className="sticky w-full p-2 bg-black flex justify-between items-center shadow-md bottom-0">
           <button
             onClick={handleToggleView}
-            className="text-sm px-3 py-1 text-white bg-black border border-white rounded-md cursor-pointer"
+            className="text-xs px-3 py-1 text-white bg-black border border-white rounded-md cursor-pointer"
           >
             {showEditor ? "Hide Code" : "Show Code"}
           </button>

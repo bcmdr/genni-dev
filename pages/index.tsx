@@ -101,7 +101,7 @@ export default function HomePage() {
           <div className="flex justify-center">
             <button
               type="submit"
-              className={`px-3 py-1 bg-black text-white rounded-md hover:bg-gray-800 ${
+              className={`px-3 py-1 bg-black text-white rounded-md ${
                 inputPinned ? "border border-white" : "flex text-lg"
               }`}
             >
@@ -142,7 +142,7 @@ export default function HomePage() {
         <div className="sticky w-full p-2 bg-black flex justify-between items-center shadow-md bottom-0">
           <button
             onClick={handleToggleView}
-            className="text-sm px-3 py-1 text-white bg-black border border-white rounded-md hover:bg-gray-800 cursor-pointer"
+            className="text-sm px-3 py-1 text-white bg-black border border-white rounded-md cursor-pointer"
           >
             {showEditor ? "Hide Code" : "Show Code"}
           </button>
